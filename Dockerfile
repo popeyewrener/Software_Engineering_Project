@@ -1,14 +1,22 @@
-FROM python:3.9-slim
-# Using the python:3.9-slim base image
+# Use an official Python runtime as a base image
+FROM python:3.9
 
-COPY requirements.txt .
-# Copying the requirements.txt file from the current directory into the container
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-RUN pip install -r requirements.txt
-# Installing the dependencies specified in requirements.txt
+# Set the working directory in the container
+WORKDIR /app
 
-COPY . .
-# Copying the entire current directory into the container
+# Copy the requirements file and install dependencies
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy the project files into the container
+COPY . /app/
+
+# Expose the port the app runs on
 EXPOSE 8000
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+# Run the application
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
